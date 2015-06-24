@@ -150,7 +150,7 @@
 /* #undef WORDS_BIGENDIAN */
 
 /* Enable SSE support */
-#define _USE_SSE 
+/* #define _USE_SSE */
 
 /* Define to empty if `const' does not conform to ANSI C. */
 /* #undef const */
