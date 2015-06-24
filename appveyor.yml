@@ -49,5 +49,5 @@ after_build:
   - npm pack
 
 deploy_script:
-  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/nwpub -c %APPVEYOR_REPO_BRANCH% -a x64 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )
-  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/nwpub -c %APPVEYOR_REPO_BRANCH% -a x86 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )
+  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -c %APPVEYOR_REPO_BRANCH% -a x64 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )
+  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -c %APPVEYOR_REPO_BRANCH% -a x86 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )
