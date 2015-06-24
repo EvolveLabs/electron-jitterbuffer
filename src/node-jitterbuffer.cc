@@ -3,6 +3,7 @@
 #include <node.h>
 #include <node_buffer.h>
 #include <node_object_wrap.h>
+#include <delay_load_hook.h>
 #include "speex/speex_jitter.h"
 #include "common.h"
 #include <nan.h>

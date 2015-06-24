@@ -1,14 +1,18 @@
 {
-  "name": "jitterbuffer",
-  "description": "NodeJS binding to Speex Jitter Buffer",
+  "name": "electron-jitterbuffer",
+  "description": "A fork of node-jitterbuffer, supporting electron builds",
   "version": "0.1.8",
-  "author": "Mikko Rantanen <jubjub@jubjubnest.net>",
-  "homepage": "https://github.com/Rantanen/node-jitterbuffer",
-  "bugs": "https://github.com/Rantanen/node-jitterbuffer/issues",
+  "author": "Justin Chase <justin@evolvelabs.com>",
+  "homepage": "https://github.com/evolvelabs/electron-jitterbuffer",
+  "bugs": "https://github.com/evolvelabs/electron-jitterbuffer/issues",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "http://github.com/Rantanen/node-jitterbuffer.git"
+    "url": "http://github.com/evolvelabs/electron-jitterbuffer.git"
+  },
+  "main": "./index.js",
+  "scripts": {
+    "install": "bash ./node_modules/electron-updater-tools/bin/elinst"
   },
   "//": "Platform limitations is due to lack of config.h files. See README.md for more information.",
   "os": [
@@ -20,10 +24,16 @@
     "x64"
   ],
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=2.2.1"
   },
+  "binaries": [
+    "https://s3.amazonaws.com/evolve-bin/{name}/{name}-{version}-{platform}-{arch}-{configuration}-{channel}.tgz"
+  ],
   "dependencies": {
     "bindings": "~1.2.1",
     "nan": "~1.8.4"
+  },
+  "devDependencies": {
+    "electron-updater-tools": "~0.0.x"
   }
 }

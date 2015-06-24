@@ -1,0 +1,53 @@
+os: Visual Studio 2015 CTP
+platform: x64
+version: 0.0.{build}
+
+# Test against this version of iojs.js
+environment:
+  target: "0.28.2"
+  nodejs_version: "2.2.1"  
+  bin_dir: ./node_modules/electron-updater-tools/bin
+  publish_binary: false
+  #s3accessKeyId:
+  #  secure: PVDgucwZsp5vUQ/xtHKh0zZKLrNp9Bx/6KrR+1HjXBA=
+  #s3secretAccessKey:
+  #  secure: /eTaC32nbaLggEfy5UuubTff2t7ogo7ztazLDA600ln6dG0LiSqWZYMZFBcurpdP
+
+branches:
+  only:
+    - master
+    - dev
+    - beta
+    - release
+
+# Skipping version increment commits 
+skip_commits:
+  message: /^(\.?[0-9]+)+$/g       # Regex for matching version commit messages
+  author: evbo
+
+# Install scripts. (runs after repo cloning)
+install:
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  # install modules
+  - npm config set loglevel warn
+  - npm install -g is-property # workaround until node 2.3.1
+  - npm install -g node-gyp
+  - npm install -g electron-prebuilt@%target%
+  - npm install
+  # Publish builds from tags
+  - for /f "delims=" %%i in ('git describe --tags --always HEAD') do set HEAD=%%i
+  - if "%APPVEYOR_REPO_BRANCH%" == "%HEAD%" ( set PUBLISH_BINARY=true )
+
+build_script:
+  - bash %bin_dir%/elb --target %target% configure x64 release
+  - bash %bin_dir%/elb --target %target% configure x86 release
+
+after_build:
+  - node %bin_dir%/elpack --channel %APPVEYOR_REPO_BRANCH% --arch x64 --configuration release
+  - node %bin_dir%/elpack --channel %APPVEYOR_REPO_BRANCH% --arch x86 --configuration release
+  - npm pack
+
+deploy_script:
+  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/nwpub -c %APPVEYOR_REPO_BRANCH% -a x64 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )
+  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/nwpub -c %APPVEYOR_REPO_BRANCH% -a x86 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )

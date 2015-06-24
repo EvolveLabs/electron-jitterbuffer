@@ -5,7 +5,7 @@
     },
     'targets': [
         {
-            'target_name': 'node-jitterbuffer',
+            'target_name': 'electron-jitterbuffer-<@(target_arch)',
             'dependencies': [
                 'deps/binding.gyp:libspeexdsp'
             ],
@@ -40,7 +40,8 @@
             'include_dirs': [
                 'deps/speex-1.2rc1/include',
                 'deps/config/speex-1.2rc1/<(OS)/<(target_arch)',
-                "<!(node -e \"require('nan')\")"
+                "<!(node -e \"require('nan')\")",
+                "<!(node -e \"require('electron-updater-tools')\")"
             ],
             'sources': [
                 'src/node-jitterbuffer.cc',
@@ -50,7 +51,19 @@
                 ],
                 'libraries': [
                 ]
-            }
+            },
+            'target_conditions': [
+                [ 'OS=="win"', {
+                    'msvs_settings': {
+                        'VCLinkerTool': {
+                            'DelayLoadDLLs': [ 'node.dll', 'iojs.exe', 'node.exe' ],
+                            # Don't print a linker warning when no imports from either .exe
+                            # are used.
+                            'AdditionalOptions': [ '/ignore:4199' ],
+                        },
+                    },
+                }],
+            ]
         }
     ]
 }
