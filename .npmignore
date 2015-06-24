@@ -1,0 +1,11 @@
+*.tgz
+*.jshintrc
+*.yml
+*.gyp
+.amazon
+.gitmodules
+build/
+deps/
+src/
+test/
+examples/
