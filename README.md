@@ -37,3 +37,11 @@ the existing platforms for an example.
 
 Use the following flags: --enable-static --disable-shared --with-pic
 
+Fork Notes
+----------
+This fork adds electron build support, compatible with [electron-updater](https://github.com/evolvelabs/electron-updater).
+
+Binaries available for various platforms on s3, e.g.:
+https://s3.amazonaws.com/evolve-bin/electron-jitterbuffer/electron-jitterbuffer-0.1.8-win32-x64-release-master.tgz
+
+See the `package.json` for how the url is composed.
