@@ -8,10 +8,10 @@ environment:
   nodejs_version: "2.2.1"  
   bin_dir: ./node_modules/electron-updater-tools/bin
   publish_binary: false
-  #s3accessKeyId:
-  #  secure: PVDgucwZsp5vUQ/xtHKh0zZKLrNp9Bx/6KrR+1HjXBA=
-  #s3secretAccessKey:
-  #  secure: /eTaC32nbaLggEfy5UuubTff2t7ogo7ztazLDA600ln6dG0LiSqWZYMZFBcurpdP
+  s3accessKeyId:
+    secure: PVDgucwZsp5vUQ/xtHKh0zZKLrNp9Bx/6KrR+1HjXBA=
+  s3secretAccessKey:
+    secure: /eTaC32nbaLggEfy5UuubTff2t7ogo7ztazLDA600ln6dG0LiSqWZYMZFBcurpdP
 
 branches:
   only:

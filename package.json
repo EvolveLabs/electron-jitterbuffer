@@ -30,10 +30,13 @@
     "https://s3.amazonaws.com/evolve-bin/{name}/{name}-{version}-{platform}-{arch}-{configuration}-{channel}.tgz"
   ],
   "dependencies": {
-    "bindings": "~1.2.1",
-    "nan": "~1.8.4"
+    "bindings": "~1.2.1"
   },
   "devDependencies": {
-    "electron-updater-tools": "~0.0.x"
-  }
+    "electron-updater-tools": "~0.0.x",
+    "nan": "~1.8.4"
+  },
+  "bundledDependencies": [
+    "electron-updater-tools"
+  ]
 }
