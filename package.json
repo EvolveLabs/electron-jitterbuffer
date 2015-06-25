@@ -21,10 +21,11 @@
     "win32"
   ],
   "cpu": [
-    "x64"
+    "x64",
+    "x86"
   ],
   "engines": {
-    "node": ">=2.2.1"
+    "node": ">=2.3.1"
   },
   "binaries": [
     "https://s3.amazonaws.com/evolve-bin/{name}/{name}-{version}-{platform}-{arch}-{configuration}-{channel}.tgz"
@@ -36,7 +37,5 @@
     "electron-updater-tools": "~0.0.x",
     "nan": "~1.8.4"
   },
-  "bundledDependencies": [
-    "electron-updater-tools"
-  ]
+  "bundledDependencies": [ "electron-updater-tools" ]
 }

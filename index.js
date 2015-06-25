@@ -1,5 +1,5 @@
 
-var jitterbuffer = require('bindings')('node-jitterbuffer');
+var jitterbuffer = require('bindings')(`electron-jitterbuffer-${process.arch}`);
 
 exports.JitterBuffer = jitterbuffer.JitterBuffer;
 
