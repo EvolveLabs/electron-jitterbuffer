@@ -1,7 +1,7 @@
 {
   "name": "electron-jitterbuffer",
   "description": "A fork of node-jitterbuffer, supporting electron builds",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "author": "Justin Chase <justin@evolvelabs.com>",
   "homepage": "https://github.com/evolvelabs/electron-jitterbuffer",
   "bugs": "https://github.com/evolvelabs/electron-jitterbuffer/issues",
