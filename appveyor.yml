@@ -1,53 +1,38 @@
 os: Visual Studio 2015 CTP
 platform: x64
-version: 0.0.{build}
+version: "{build}"
 
-# Test against this version of iojs.js
 environment:
   target: "0.28.2"
-  nodejs_version: "2.2.1"  
-  bin_dir: ./node_modules/electron-updater-tools/bin
+  nodejs_version: "2.2.1"
   publish_binary: false
-  s3accessKeyId:
-    secure: PVDgucwZsp5vUQ/xtHKh0zZKLrNp9Bx/6KrR+1HjXBA=
-  s3secretAccessKey:
-    secure: /eTaC32nbaLggEfy5UuubTff2t7ogo7ztazLDA600ln6dG0LiSqWZYMZFBcurpdP
+  bin_dir: ./node_modules/electron-updater-tools/bin
 
-branches:
-  only:
-    - master
-    - dev
-    - beta
-    - release
-
-# Skipping version increment commits 
-skip_commits:
-  message: /^(\.?[0-9]+)+$/g       # Regex for matching version commit messages
-  author: evbo
-
-# Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version $env:platform
   # install modules
-  - npm config set loglevel warn
   - npm install -g is-property # workaround until node 2.3.1
+  - npm install -g process-nextick-args # workaround maxpath issues in windows
   - npm install -g node-gyp
   - npm install -g electron-prebuilt@%target%
   - npm install
-  # Publish builds from tags
-  - for /f "delims=" %%i in ('git describe --tags --always HEAD') do set HEAD=%%i
-  - if "%APPVEYOR_REPO_BRANCH%" == "%HEAD%" ( set PUBLISH_BINARY=true )
+  # Publish builds when tagged
+  # Or if APPVEYOR_REPO_COMMIT_MESSAGE contains [publish binary]
+  - ps: if($env:APPVEYOR_REPO_TAG) { $env:PUBLISH_BINARY = 'true' }
+  - ps: if($env:APPVEYOR_REPO_COMMIT_MESSAGE.contains('[publish binary]')) { $env:PUBLISH_BINARY = 'true' }
+
+test_script:
+  - npm test
 
 build_script:
-  - bash %bin_dir%/elb --target %target% configure x64 release
-  - bash %bin_dir%/elb --target %target% configure x86 release
+  - bash %bin_dir%/elb --target %target% configure release x64
+  - bash %bin_dir%/elb --target %target% configure release ia32
 
 after_build:
-  - node %bin_dir%/elpack --channel %APPVEYOR_REPO_BRANCH% --arch x64 --configuration release
-  - node %bin_dir%/elpack --channel %APPVEYOR_REPO_BRANCH% --arch x86 --configuration release
-  - npm pack
+  - node %bin_dir%/elpack --configuration release --arch x64
+  - node %bin_dir%/elpack --configuration release --arch ia32
 
 deploy_script:
-  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -c %APPVEYOR_REPO_BRANCH% -a x64 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )
-  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -c %APPVEYOR_REPO_BRANCH% -a x86 -i %s3accessKeyId% -k %s3secretAccessKey% -C release )
+  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -i %s3accessKeyId% -k %s3secretAccessKey% -C release -a x64 )
+  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -i %s3accessKeyId% -k %s3secretAccessKey% -C release -a ia32 )

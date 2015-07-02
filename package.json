@@ -1,7 +1,7 @@
 {
   "name": "electron-jitterbuffer",
   "description": "A fork of node-jitterbuffer, supporting electron builds",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "author": "Justin Chase <justin@evolvelabs.com>",
   "homepage": "https://github.com/evolvelabs/electron-jitterbuffer",
   "bugs": "https://github.com/evolvelabs/electron-jitterbuffer/issues",
@@ -12,7 +12,7 @@
   },
   "main": "./index.js",
   "scripts": {
-    "install": "bash ./node_modules/electron-updater-tools/bin/elinst"
+    "install": "bash ./node_modules/.bin/elinst"
   },
   "//": "Platform limitations is due to lack of config.h files. See README.md for more information.",
   "os": [
@@ -28,13 +28,13 @@
     "node": ">=2.3.1"
   },
   "binaries": [
-    "https://s3.amazonaws.com/evolve-bin/{name}/{name}-{version}-{platform}-{arch}-{configuration}-{channel}.tgz"
+    "https://s3.amazonaws.com/evolve-bin/{name}/{name}-{version}-{platform}-{arch}-{configuration}.tgz"
   ],
   "dependencies": {
     "bindings": "~1.2.1"
   },
   "devDependencies": {
-    "electron-updater-tools": "~0.0.x",
+    "electron-updater-tools": "~0.1.x",
     "nan": "~1.8.4"
   },
   "bundledDependencies": [ "electron-updater-tools" ]

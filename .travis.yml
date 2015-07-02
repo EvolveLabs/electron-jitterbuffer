@@ -1,45 +1,54 @@
+git:
+  depth: 10
+
 os:
   - linux
   - osx
 
-language: node_js
-node_js:
-  - "iojs-v2.2.1"
-
 env:
   global:
-    - target: 0.28.2 # electron version
-    - bin_dir: ./node_modules/electron-updater-tools/bin
+    - PATH: ./node_modules/electron-updater-tools/bin:$PATH
+    - PUBLISH_BINARY: false
+    - NODE_VERSION: iojs
+    - ELECTRON_VERSION: 0.28.2
+    # Other available variables:
     # s3accessKeyId
-    # secure: "JVVF/NB+ScBOntK8WADzlZvHjYpf4im/Ku57xYcFsiuFBWq8cfRvGSzUhkBfY7BpoCr5vPFmdZWo5rKxhXrStdaj73z6rK7rD+6eAVc0z1k9qqjnMnWYG3W/6TSaFT1xpk+1urx2wrp4B/QEsCXGPIA07oCbksiNEDAUSKZQURg+E0ic+PyxkdXwO+WCF+PfG0rHhjrDWiq+wZMxnXrGZ6A79cCoEsYR7hqQCv1zq9myE5jbfDgUmR+xhE41akd0UQdp8L6aqMJw13Q3VJPfTnBdMsR/W98NxUyeAslcQuzQpeQVs7Hl2ntPe4Ne3j26iJbCkIHvfxb1sJhS+Q5syulPnTKR9zccvSBlC7iKsSzAr9Fg4mdMxn+3/xhMl/Tc7hjqcUnGhxvizMJKde6VzTxaRZxrkmZwexlBdNcROKSho7X+sbZxd6nOLU15as67oxdBMDP0Tm1zOZhGraE993Wq6dkqi3cLYxPPfvDs/7gYXyYZdWo96M1QBFJtIwTWeN/yasRIjdo+rphLuPqsp0OMrJsvY0yM4Dg24lHPqX0P9YUq4bmNLG8vU1T/b+Fpk44Wn9ogegpPdN8gYEFoDSuGZB9azEx9rYSSfQS9llx8L6jtwRSsJ2vWdtL1krXAvgMzj6EvvnVZTEC2vVuQS5fqwriHFmjwawvBU4cjgg8="
     # s3secretAccessKey
-    # secure: "XOKtz1DPOqpG/z48Gt4W58Zlf5aH4NP+tIY/T4VvFAvlGH3jqw33q/7EWbFvoH/2d92rf4Kq91NPAuf/DHqW205TvFtuukHkcM2CNn40nmV848RPjN0aurlm5+/aqK/v5CeJO/ia/fOf4ob9a1anC5CsWLyi3GioxjYZDRlnkvo8vwd/dh0xC3jXfFicTPsiSq4/Us1GtuN0ow9YeyYyP7hjs/AwVdRv1JKaz2LtLHRHae0dYJ/EDDJmsk8FkYG1Bc1Nd3wJvWZxm17gYGR1+JbAHf3iQkIgsKoT1m/L8NEH9vRfN3Kqc/rxIimRTozTOARgv0AHirAarCmc1/Qd1bR001QWR3K/HGURfWjZ1zWN4SEERTGTs2zhD3YRkvWDdZoRPjkzM2B90pLxjpWCKjhqzsk5R8xasIMexXlxj6jI/zwpbzTNhvgF1XN+qpAw/LawBPIFvDgfNi2gJZYxdnpPal+myRRUm0d2sAuQH/DZiTCHV+ZR54E460Oga8TSSOMezoLJlKmizdUjOgeBB+IDW3cC+IONJ3r1iIrImf+IeQeJ/0kJGj/FAPl4TaF0+/VODplRYI5pcYmIvDTJoy4qY+VC1Sxxz9WK8RZG+d8pwUF14mFfDrfs2DwQrTn6CRrTYHgV/ZOqA3bUYhtZ4UtjRN9FjbxuoFxLIjvgCSs="
 
 before_install:
+  # nvm is not yet supported on osx, manually install
+  - git clone https://github.com/creationix/nvm.git /tmp/.nvm
+  - source /tmp/.nvm/nvm.sh
+  - nvm install $NODE_VERSION
+  - nvm use $NODE_VERSION
   # native dependencies
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-  - sudo apt-get update -qq
-  - sudo apt-get install -qq gcc-4.8 g++-4.8 gcc-4.8-multilib g++-4.8-multilib libelf-dev
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8
-  # npm dependencies
-  - npm install node-gyp -g
-  - npm install electron-prebuilt@${target} -g
-  - npm install
-  # Only publish tags
-  - PUBLISH_BINARY=false
-  - if [[ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]]; then PUBLISH_BINARY=true; fi;
+  - if [ $TRAVIS_OS_NAME == "linux" ]; then
+      sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y;
+      sudo apt-get update -qq;
+      sudo apt-get install -qq gcc-4.8 g++-4.8 gcc-4.8.multilib g++-4.8-multilib libelf-dev;
+      sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 90 --slave /usr/bin/g++ g++ /usr/bin/g++-4.8;
+    fi
+  # Only Publish when building a tag
+  - if [ $TRAVIS_BRANCH == `git describe --tags --always HEAD` ]; then PUBLISH_BINARY=true; fi;
   # or if we put [publish binary] in the commit message
   - COMMIT_MESSAGE=$(git show -s --format=%B $TRAVIS_COMMIT | tr -d '\n')
   - if test "${COMMIT_MESSAGE#*'[publish binary]'}" != "$COMMIT_MESSAGE"; then PUBLISH_BINARY=true; fi;
 
+install:
+  - nvm install iojs
+  # npm dependencies
+  - npm install node-gyp -g
+  - npm install electron-prebuilt -g
+  - npm install
+
 script:
-  - $bin_dir/elb configure x64 release --target ${target}
-  - $bin_dir/elb configure x86 release --target ${target}
+  - elb configure release x64
+  - if [ $TRAVIS_OS_NAME != osx ]; then elb configure release ia32; fi
 
 after_success:
   # pack the binaries for this platform
-  - node $bin_dir/elpack --channel $TRAVIS_BRANCH --arch x64 --configuration release
-  - node $bin_dir/elpack --channel $TRAVIS_BRANCH --arch x86 --configuration release
+  - elpack --configuration release --arch x64
+  - if [ $TRAVIS_OS_NAME != osx ]; then elpack --configuration release --arch ia32; fi
   # publish to s3
-  - if [[ $PUBLISH_BINARY == true ]]; then node $bin_dir/elpub -c $TRAVIS_BRANCH -b evolve-bin -a x64 -i $s3accessKeyId -k $s3secretAccessKey -C release; fi
-  - if [[ $PUBLISH_BINARY == true ]]; then node $bin_dir/elpub -c $TRAVIS_BRANCH -b evolve-bin -a x86 -i $s3accessKeyId -k $s3secretAccessKey -C release; fi
+  - if [ $PUBLISH_BINARY == true ]; then elpub -b evolve-bin -i $s3accessKeyId -k $s3secretAccessKey -C release -a x64; fi
+  - if [ $PUBLISH_BINARY == true ] && [ $TRAVIS_OS_NAME != osx ]; then elpub -b evolve-bin -i $s3accessKeyId -k $s3secretAccessKey -C release -a ia32; fi 
