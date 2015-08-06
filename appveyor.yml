@@ -3,19 +3,25 @@ platform: x64
 version: "{build}"
 
 environment:
-  target: "0.28.2"
   nodejs_version: "2.2.1"
   publish_binary: false
   bin_dir: ./node_modules/electron-updater-tools/bin
+  matrix:
+    - ARCH: ia32
+      CONF: release
+    - ARCH: ia32
+      CONF: debug
+    - ARCH: x64
+      CONF: release
+    - ARCH: x64
+      CONF: debug
 
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version $env:platform
   # install modules
   - npm install -g is-property # workaround until node 2.3.1
-  - npm install -g process-nextick-args # workaround maxpath issues in windows
   - npm install -g node-gyp
-  - npm install -g electron-prebuilt@%target%
   - npm install
   # Publish builds when tagged
   # Or if APPVEYOR_REPO_COMMIT_MESSAGE contains [publish binary]
@@ -26,13 +32,10 @@ test_script:
   - npm test
 
 build_script:
-  - bash %bin_dir%/elb --target %target% configure release x64
-  - bash %bin_dir%/elb --target %target% configure release ia32
+  - bash %bin_dir%/elb configure %ARCH% %CONF%
 
 after_build:
-  - node %bin_dir%/elpack --configuration release --arch x64
-  - node %bin_dir%/elpack --configuration release --arch ia32
+  - node %bin_dir%/elpack --arch %ARCH% --configuration %CONF%
 
 deploy_script:
-  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -i %s3accessKeyId% -k %s3secretAccessKey% -C release -a x64 )
-  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -i %s3accessKeyId% -k %s3secretAccessKey% -C release -a ia32 )
+  - if "%PUBLISH_BINARY%" == "true" ( node %bin_dir%/elpub -b evolve-bin -i %s3accessKeyId% -k %s3secretAccessKey% -a %ARCH% -C %CONF% )

@@ -1,16 +1,26 @@
 git:
   depth: 10
 
-os:
-  - linux
-  - osx
+matrix:
+  include:
+    - os: linux
+      env: CONFIGURATION=release ARCH=x64
+    - os: linux
+      env: CONFIGURATION=release ARCH=ia32
+    - os: linux
+      env: CONFIGURATION=debug   ARCH=x64
+    - os: linux
+      env: CONFIGURATION=debug   ARCH=ia32
+    - os: osx
+      env: CONFIGURATION=release ARCH=x64
+    - os: osx
+      env: CONFIGURATION=debug   ARCH=x64
 
 env:
   global:
     - PATH: ./node_modules/electron-updater-tools/bin:$PATH
     - PUBLISH_BINARY: false
-    - NODE_VERSION: iojs
-    - ELECTRON_VERSION: 0.28.2
+    - NODE_VERSION: 2.5.0
     # Other available variables:
     # s3accessKeyId
     # s3secretAccessKey
@@ -35,20 +45,17 @@ before_install:
   - if test "${COMMIT_MESSAGE#*'[publish binary]'}" != "$COMMIT_MESSAGE"; then PUBLISH_BINARY=true; fi;
 
 install:
-  - nvm install iojs
   # npm dependencies
   - npm install node-gyp -g
-  - npm install electron-prebuilt -g
   - npm install
 
 script:
-  - elb configure release x64
-  - if [ $TRAVIS_OS_NAME != osx ]; then elb configure release ia32; fi
+  - elb configure $ARCH $CONFIGURATION
 
 after_success:
   # pack the binaries for this platform
-  - elpack --configuration release --arch x64
-  - if [ $TRAVIS_OS_NAME != osx ]; then elpack --configuration release --arch ia32; fi
+  - elpack --arch $ARCH --configuration $CONFIGURATION
   # publish to s3
-  - if [ $PUBLISH_BINARY == true ]; then elpub -b evolve-bin -i $s3accessKeyId -k $s3secretAccessKey -C release -a x64; fi
-  - if [ $PUBLISH_BINARY == true ] && [ $TRAVIS_OS_NAME != osx ]; then elpub -b evolve-bin -i $s3accessKeyId -k $s3secretAccessKey -C release -a ia32; fi 
+  - if [ $PUBLISH_BINARY == true ]; then 
+      elpub -b evolve-bin -i $s3accessKeyId -k $s3secretAccessKey -a $ARCH -C $CONFIGURATION; 
+    fi
