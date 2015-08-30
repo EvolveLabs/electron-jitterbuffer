@@ -1,8 +1,11 @@
 {
   "name": "electron-jitterbuffer",
   "description": "A fork of node-jitterbuffer, supporting electron builds",
-  "version": "0.1.12",
-  "author": "Justin Chase <justin@evolvelabs.com>",
+  "version": "0.2.0",
+  "author": "Mikko Rantanen <jubjub@jubjubnest.net>",
+  "contributors": [
+    "Justin Chase <justin@evolvelabs.com>"
+  ],
   "homepage": "https://github.com/evolvelabs/electron-jitterbuffer",
   "bugs": "https://github.com/evolvelabs/electron-jitterbuffer/issues",
   "license": "MIT",
@@ -12,7 +15,8 @@
   },
   "main": "./index.js",
   "scripts": {
-    "install": "bash ./node_modules/.bin/elinst"
+    "install": "bash ./node_modules/.bin/elinst",
+    "test": "echo no tests."
   },
   "//": "Platform limitations is due to lack of config.h files. See README.md for more information.",
   "os": [
@@ -25,17 +29,21 @@
     "x86"
   ],
   "engines": {
-    "node": ">=2.3.1"
+    "node": ">=3.2.0",
+    "electron": "0.31.0"
   },
   "binaries": [
     "https://s3.amazonaws.com/evolve-bin/{name}/{name}-{version}-{platform}-{arch}-{configuration}.tgz"
   ],
   "dependencies": {
-    "bindings": "~1.2.1"
+    "bindings": "^1.2.1",
+    "electron-updater-tools": "^0.2.2"
   },
   "devDependencies": {
-    "electron-updater-tools": "~0.1.x",
-    "nan": "~1.8.4"
+    "electron-updater-tools": "~0.2.0",
+    "nan": "~2.0.0"
   },
-  "bundledDependencies": [ "electron-updater-tools" ]
+  "bundledDependencies": [
+    "electron-updater-tools"
+  ]
 }

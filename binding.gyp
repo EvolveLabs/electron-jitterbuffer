@@ -54,6 +54,9 @@
             },
             'target_conditions': [
                 [ 'OS=="win"', {
+                    'libraries': [
+                        '-lShlwapi.lib'
+                    ],
                     'msvs_settings': {
                         'VCLinkerTool': {
                             'DelayLoadDLLs': [ 'node.dll', 'iojs.exe', 'node.exe' ],

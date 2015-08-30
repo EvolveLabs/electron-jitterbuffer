@@ -20,7 +20,7 @@ env:
   global:
     - PATH: ./node_modules/electron-updater-tools/bin:$PATH
     - PUBLISH_BINARY: false
-    - NODE_VERSION: 2.5.0
+    - NODE_VERSION: 3.2.0
     # Other available variables:
     # s3accessKeyId
     # s3secretAccessKey
