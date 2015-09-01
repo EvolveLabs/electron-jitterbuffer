@@ -49,6 +49,6 @@
 	Local<Function> VAR = Local<Function>::Cast(info[I]);
 
 #define CREATE_BUFFER( name, data, length ) \
-	Local<Object> name = Nan::NewBuffer(reinterpret_cast<char*>(data), length).ToLocalChecked();
+	Local<Object> name = Nan::CopyBuffer(reinterpret_cast<char*>(data), length).ToLocalChecked();
 
 #endif
